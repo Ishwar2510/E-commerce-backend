@@ -153,18 +153,20 @@ router.get("/remove/:email/:id", async (req, res) => {
     try {
         const { id, email } = req.params;
         const user = await User.findOne({ email: email });
-        user.carts = user.carts.filter((curel)=>{
-            return curel._id !=id
-        })
+        console.log(user);
+        // user.carts = user.carts.filter((curel)=>{
+        //     return curel._id !=id
+        // })
         let index = 0;
         for( let i=0; i<user.carts.length;i++){
+            console.log("*******",user.carts[i])
             if (user.carts[i]._id===id){
                 index = i;
-            return;            }
+            break;            }
         }
         user.carts = user.carts.splice(index,1);
         console.log(index)
-        console.log()
+        console.log(user.carts)
         
         await user.save()
         res.status(201).json(user)
