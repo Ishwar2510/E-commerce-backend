@@ -36,6 +36,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 6
     },
+    loggedin: {
+        type: Boolean
+    },
     tokens:[
         {
             token:{
@@ -58,19 +61,19 @@ userSchema.pre("save", async function (next) {
 });
 
 // generting token
-userSchema.methods.generatAuthtoken = async function(){
-    try {
-        let token = jwt.sign({ _id:this._id},keysecret,{
-            expiresIn:"1d"
-        });
-        this.tokens = this.tokens.concat({token:token});
-        await this.save();
-        return token;
+// userSchema.methods.generatAuthtoken = async function(){
+//     try {
+//         let token = jwt.sign({ _id:this._id},keysecret,{
+//             expiresIn:"1d"
+//         });
+//         this.tokens = this.tokens.concat({token:token});
+//         await this.save();
+//         return token;
 
-    } catch (error) {
-        console.log(error);
-    }
-}
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
 // addto cart data
 userSchema.methods.addcartdata = async function(cart){
@@ -92,11 +95,3 @@ module.exports = User;
 
 
 
-// carts:Array
-// jo aavi rite carts ne add karso to pn chale other wise je old methods 6 eto use krvij
-// carts:[
-//     {
-//         cart:Object
-//     }
-// ]
-//  this.carts = this.carts.concat({cart}); // to pachi cart ne destructring krine lakhvu

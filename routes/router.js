@@ -5,12 +5,7 @@ const User = require("../models/userSchema");
 const bcrypt = require("bcryptjs");
 const authenicate = require("../middleware/authenticate");
 
-// router.get("/",(req,res)=>{
-//     res.send("this is testing routes");
-// });
 
-
-// get the products data
 
 
 router.get("/getproducts", async (req, res) => {
@@ -23,7 +18,7 @@ router.get("/getproducts", async (req, res) => {
         res.status(201).json(producstdata);
     } catch (error) {
         console.log("error" + error.message);
-        res.status(401).send("not valid")
+        res.status(401).send("ishwar Something went wrong")
     }
 });
 
@@ -34,8 +29,8 @@ router.post("/register", async (req, res) => {
     const { fname, email, mobile, password, cpassword } = req.body;
 
     if (!fname || !email || !mobile || !password || !cpassword) {
-        res.status(422).json({ error: "filll the all details" });
-        // console.log("bhai nathi present badhi details");
+        res.status(422).json({ error: " ishwar fill all  details" });
+        
     };
 
     try {
@@ -43,16 +38,16 @@ router.post("/register", async (req, res) => {
         const preuser = await User.findOne({ email: email });
 
         if (preuser) {
-            res.status(422).json({ error: "This email is already exist" });
+            res.status(422).json({ error: "ishwar This email  already exist" });
         } else if (password !== cpassword) {
-            res.status(422).json({ error: "password are not matching" });;
+            res.status(422).json({ error: " ishwar password dosent match" });;
         } else {
 
             const finaluser = new User({
                 fname, email, mobile, password, cpassword
             });
 
-            // yaha pe hasing krenge
+            // Hashing to be done here
 
             const storedata = await finaluser.save();
             // console.log(storedata + "user successfully added");
@@ -60,7 +55,7 @@ router.post("/register", async (req, res) => {
         }
 
     } catch (error) {
-        console.log("error the bhai catch ma for registratoin time" + error.message);
+        console.log("ishwar some error while registering" + error.message);
         res.status(422).send(error);
     }
 
@@ -74,7 +69,7 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        res.status(400).json({ error: "fill the details" });
+        res.status(400).json({ error: "ishwar fill the details" });
     }
 
     try {
@@ -88,26 +83,28 @@ router.post("/login", async (req, res) => {
 
 
             if (!isMatch) {
-                res.status(400).json({ error: "invalid crediential pass" });
+                res.status(400).json({ error: "ishwar invalid crediential pass" });
             } else {
                 
-                const token = await userlogin.generatAuthtoken();
-                console.log(token);
+                // const token = await userlogin.generatAuthtoken();
+                // console.log(token);
 
-                res.cookie("eccomerce", token, {
-                    expires: new Date(Date.now() + 2589000),
-                    httpOnly: true
-                });
+                // res.cookie("eccomerce", token, {
+                //     expires: new Date(Date.now() + 2589000),
+                //     httpOnly: true
+                // });
+                userlogin.islogin=true;
+                await userlogin.save()
                 res.status(201).json(userlogin);
             }
 
         } else {
-            res.status(400).json({ error: "user not exist" });
+            res.status(400).json({ error: "ishwar user does not exist" });
         }
 
     } catch (error) { 
-        console.log("error the bhai catch ma for login time" + error.message);
-        res.status(400).json({ error: "invalid crediential pass" });
+        console.log("ishwar there is some error duru=ing login" + error.message);
+        res.status(400).json({ error: " ishwar invalid crediential pass" });
        
     }
 });
@@ -131,15 +128,17 @@ router.get("/getproductsone/:id", async (req, res) => {
 
 
 // adding the data into cart
-router.post("/addcart/:id", authenicate, async (req, res) => {
-
+router.post("/addcart/:email/:id", async (req, res) => {
+        
     try {
         // console.log("perfect 6");
-        const { id } = req.params;
+        const { id, email } = req.params;
         const cart = await products.findOne({ id: id });
         // console.log(cart + "cart milta hain");
 
-        const Usercontact = await User.findOne({ _id: req.userID });
+        // const Usercontact = await User.findOne({ _id: req.userID });
+       
+        const Usercontact = await User.findOne({ email: email })
         // console.log(Usercontact + "user milta hain");
 
 
@@ -153,15 +152,16 @@ router.post("/addcart/:id", authenicate, async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(401).send("error from addcart")
+        res.status(401).send("ishwar error from addcart")
     }
 });
 
 
 // get data into the cart
-router.get("/cartdetails", authenicate, async (req, res) => {
+router.get("/cartdetails/:email", async (req, res) => {
+    const {email} = req.params
     try {
-        const buyuser = await User.findOne({ _id: req.userID });
+        const buyuser = await User.findOne({ email:email});
         console.log(buyuser + "user hain buy pr");
         res.status(201).json(buyuser);
     } catch (error) {
@@ -172,34 +172,20 @@ router.get("/cartdetails", authenicate, async (req, res) => {
 
 
 
-// get user is login or not
-router.get("/validuser", authenicate, async (req, res) => {
-    try {
-        const validuserone = await User.findOne({ _id: req.userID });
-        // console.log(validuserone + "user hain home k header main pr");
-        res.status(201).json(validuserone);
-    } catch (error) {
-        console.log(error + "error for valid user");
-        res.status(401).send("not a valid user ")
-        
-    }
-});
+
 
 // for userlogout
 
-router.get("/logout", authenicate, async (req, res) => {
+router.get("/logout/:email",  async (req, res) => {
+    const {email} = req.params
     try {
-        req.rootUser.tokens = req.rootUser.tokens.filter((curelem) => {
-            return curelem.token !== req.token
-        });
-
-        res.clearCookie("eccomerce", { path: "/" });
-        req.rootUser.save();
-        res.status(201).json(req.rootUser.tokens);
+        const userlogin = await User.findOne({ email: email });
+        userlogin.islogin=false
+        await userlogin.save()
         console.log("user logout");
 
     } catch (error) {
-        console.log(error + "jwt provide then logout");
+       
         res.status(400).send(`error from logout`)
     }
 });
@@ -207,17 +193,25 @@ router.get("/logout", authenicate, async (req, res) => {
 // item remove ho rhi hain lekin api delete use krna batter hoga
 // remove iteam from the cart
 
-router.get("/remove/:id", authenicate, async (req, res) => {
+router.get("/remove/:email/:id", async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id, email } = req.params;
 
-        req.rootUser.carts = req.rootUser.carts.filter((curel) => {
-            return curel.id != id
-        });
+        // req.rootUser.carts = req.rootUser.carts.filter((curel) => {
+        //     return curel.id != id
+        // });
 
-        req.rootUser.save();
-        res.status(201).json(req.rootUser);
-        console.log("iteam remove");
+        // req.rootUser.save();
+        // res.status(201).json(req.rootUser);
+        // console.log("iteam remove");
+
+
+        const user = await User.findOne({ email: email });
+        user.carts = user.carts.filter((curel)=>{
+            return curel.id !=id
+        })
+        await user.save()
+        res.status(201).json(user)
 
     } catch (error) {
         console.log(error + "jwt provide then remove");
