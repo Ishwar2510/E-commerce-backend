@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cookieParser(""));
 app.use(cors(
     {
-        origin: ["http://localhost:3000","https://admirable-sunshine-233630.netlify.app/","https://63c6ab91d289a53f83b32279--superb-granita-a136e7.netlify.app"],
+        origin: ["http://localhost:3000"],
         optionsSuccessStatus: 200,
         credentials: true
     }
