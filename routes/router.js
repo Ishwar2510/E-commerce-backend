@@ -93,8 +93,10 @@ router.post("/login", async (req, res) => {
                 //     expires: new Date(Date.now() + 2589000),
                 //     httpOnly: true
                 // });
-                userlogin.islogin=true;
+                console.log("ishwar this is user login data",userlogin)
+                userlogin.loggedin=true;
                 await userlogin.save()
+                console.log("login status gettinh here ", userlogin.islogin)
                 res.status(201).json(userlogin);
             }
 
