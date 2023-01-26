@@ -153,7 +153,7 @@ router.get("/remove/:email/:id", async (req, res) => {
     try {
         const { id, email } = req.params;
         const user = await User.findOne({ email: email });
-        console.log(user);
+        
         // user.carts = user.carts.filter((curel)=>{
         //     return curel._id !=id
         // })
@@ -172,6 +172,7 @@ router.get("/remove/:email/:id", async (req, res) => {
         res.status(201).json(user)
 
     } catch (error) {
+        console.log(error)
         res.status(400).json(error);
     }
 });
