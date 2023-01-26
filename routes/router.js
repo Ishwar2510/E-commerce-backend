@@ -182,7 +182,7 @@ router.get("/logout/:email",  async (req, res) => {
     const {email} = req.params
     try {
         const userlogin = await User.findOne({ email: email });
-        userlogin.islogin=false
+        userlogin.loggedin=false
         await userlogin.save()
         console.log("user logout");
 
