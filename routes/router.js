@@ -162,6 +162,7 @@ router.post("/addcart/:email/:id", async (req, res) => {
 // get data into the cart
 router.get("/cartdetails/:email", async (req, res) => {
     const {email} = req.params
+    console.log(email)
     try {
         const buyuser = await User.findOne({ email:email});
         console.log(buyuser + "user hain buy pr");
