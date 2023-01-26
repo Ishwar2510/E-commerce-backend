@@ -23,6 +23,7 @@ router.get("/getproducts", async (req, res) => {
         res.status(201).json(producstdata);
     } catch (error) {
         console.log("error" + error.message);
+        res.status(401).send("not valid")
     }
 });
 
@@ -104,9 +105,10 @@ router.post("/login", async (req, res) => {
             res.status(400).json({ error: "user not exist" });
         }
 
-    } catch (error) {
-        res.status(400).json({ error: "invalid crediential pass" });
+    } catch (error) { 
         console.log("error the bhai catch ma for login time" + error.message);
+        res.status(400).json({ error: "invalid crediential pass" });
+       
     }
 });
 
@@ -151,6 +153,7 @@ router.post("/addcart/:id", authenicate, async (req, res) => {
         }
     } catch (error) {
         console.log(error);
+        res.status(401).send("error from addcart")
     }
 });
 
@@ -163,6 +166,7 @@ router.get("/cartdetails", authenicate, async (req, res) => {
         res.status(201).json(buyuser);
     } catch (error) {
         console.log(error + "error for buy now");
+        res.status(401).send("error from cart details")
     }
 });
 
@@ -176,6 +180,8 @@ router.get("/validuser", authenicate, async (req, res) => {
         res.status(201).json(validuserone);
     } catch (error) {
         console.log(error + "error for valid user");
+        res.status(401).send("not a valid user ")
+        
     }
 });
 
@@ -194,6 +200,7 @@ router.get("/logout", authenicate, async (req, res) => {
 
     } catch (error) {
         console.log(error + "jwt provide then logout");
+        res.status(400).send(`error from logout`)
     }
 });
 
