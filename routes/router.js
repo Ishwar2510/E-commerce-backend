@@ -185,6 +185,7 @@ router.get("/logout/:email",  async (req, res) => {
         userlogin.loggedin=false
         await userlogin.save()
         console.log("user logout");
+        res.status(200).send("successfully logged off")
 
     } catch (error) {
        
