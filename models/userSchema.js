@@ -37,7 +37,8 @@ const userSchema = new mongoose.Schema({
         minlength: 6
     },
     loggedin: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     tokens:[
         {
