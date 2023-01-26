@@ -14,6 +14,7 @@ router.get("/getproducts", async (req, res) => {
         const producstdata = await products.find();
         res.status(201).json(producstdata);
     } catch (error) {
+        console.log(error)
         res.status(401).send("ishwar Something went wrong")
     }
 });
@@ -47,6 +48,7 @@ router.post("/register", async (req, res) => {
         }
 
     } catch (error) {
+        console.log(error)
         res.status(422).send(error);
     }
 
@@ -64,7 +66,7 @@ router.post("/login", async (req, res) => {
     }
     try {
         const userlogin = await User.findOne({ email: email });
-        console.log(userlogin);
+       
         if (userlogin) {
             const isMatch = await bcrypt.compare(password, userlogin.password);
             
@@ -79,6 +81,7 @@ router.post("/login", async (req, res) => {
             res.status(400).json({ error: "ishwar user does not exist" });
         }
     } catch (error) { 
+        console.log(error)
         res.status(400).json({ error: " ishwar invalid crediential pass" });
     }
 });
@@ -92,6 +95,7 @@ router.get("/getproductsone/:id", async (req, res) => {
         const individual = await products.findOne({ id: id });
         res.status(201).json(individual);
     } catch (error) {
+        console.log(error)
         res.status(400).json(error);
     }
 });
@@ -124,6 +128,7 @@ router.get("/cartdetails/:email", async (req, res) => {
         const buyuser = await User.findOne({ email:email});
         res.status(201).json(buyuser);
     } catch (error) {
+        console.log(error)
         res.status(401).send("error from cart details")
     }
 });
@@ -142,6 +147,7 @@ router.get("/logout/:email",  async (req, res) => {
         await userlogin.save()
         res.status(200).send("successfully logged off")
     } catch (error) {
+        console.log(error)
         res.status(400).send(`error from logout`)
     }
 });
@@ -153,19 +159,13 @@ router.get("/remove/:email/:id", async (req, res) => {
     try {
         const { id, email } = req.params;
         const user = await User.findOne({ email: email });
-        
-       
         let index = 0;
-        
         for(  i=0; i < user.carts.length;i++){
-            
             if (user.carts[i].id===id){
                 index = i;
             break;            }
         }
         user.carts.splice(index,1);
-        console.log("elememt at index no  ",index)
-        
         await user.save()
         res.status(201).json(user)
 
@@ -174,6 +174,5 @@ router.get("/remove/:email/:id", async (req, res) => {
         res.status(400).json(error);
     }
 });
-
 
 module.exports = router;
