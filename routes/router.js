@@ -158,15 +158,16 @@ router.get("/remove/:email/:id", async (req, res) => {
         //     return curel._id !=id
         // })
         let index = 0;
-        for( let i=0; i<user.carts.length;i++){
-            console.log("*******",user.carts[i])
+        
+        for(  i=0; i < user.carts.length;i++){
+            console.log(i,"--->",user.carts[i].id)
             if (user.carts[i]._id===id){
                 index = i;
             break;            }
         }
         user.carts = user.carts.splice(index,1);
-        console.log(index)
-        console.log(user.carts)
+        console.log("elememt at index no  ",index)
+        
         
         await user.save()
         res.status(201).json(user)
